@@ -31,7 +31,7 @@ export function TemplatesScreen({
 }) {
   return (
     <Box>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+      <Stack direction="row" sx={{ mb: 2, justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h5">Templates</Typography>
         <Button variant="contained" onClick={onNew}>
           New Template
@@ -71,7 +71,7 @@ export function TemplatesScreen({
           >
             <ListItemText
               primary={template.name}
-              secondaryTypographyProps={{ component: 'div' }}
+              slotProps={{ secondary: { component: 'div' } }}
               secondary={
                 <Stack direction="row" spacing={0.5} sx={{ mt: 0.5 }}>
                   <Chip label={`${template.categories.length} categories`} />

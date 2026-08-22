@@ -60,10 +60,12 @@ function tokenize(source: string): Token[] | { error: string } {
 
 class Parser {
   private pos = 0;
-  constructor(
-    private tokens: Token[],
-    private knownKeys: Set<string>,
-  ) {}
+  private tokens: Token[];
+  private knownKeys: Set<string>;
+  constructor(tokens: Token[], knownKeys: Set<string>) {
+    this.tokens = tokens;
+    this.knownKeys = knownKeys;
+  }
 
   private peek(): Token | undefined {
     return this.tokens[this.pos];

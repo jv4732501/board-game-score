@@ -53,7 +53,7 @@ export function PlayersScreen({
       <Typography variant="h5" gutterBottom>
         Players
       </Typography>
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }} alignItems="center">
+      <Stack direction="row" spacing={1} sx={{ mb: 2, alignItems: 'center' }}>
         <TextField label="Name" value={name} onChange={(e) => setName(e.target.value)} />
         <TextField
           label="Color"

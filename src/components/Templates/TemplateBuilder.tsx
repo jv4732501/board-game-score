@@ -119,7 +119,7 @@ export function TemplateBuilder({
 
         <Typography variant="subtitle1">Categories</Typography>
         {categories.map((category) => (
-          <Stack key={category.id} direction="row" spacing={1} alignItems="center">
+          <Stack key={category.id} direction="row" spacing={1} sx={{ alignItems: 'center' }}>
             <TextField
               label="Category Name"
               value={category.name}
