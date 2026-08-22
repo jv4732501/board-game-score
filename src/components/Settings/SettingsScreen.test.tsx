@@ -44,6 +44,11 @@ describe('SettingsScreen', () => {
     render(<SettingsScreen state={EMPTY_STATE} dispatch={dispatch} />);
     await user.upload(screen.getByLabelText('Import Backup File'), file);
 
+    expect(await screen.findByText(/imported/i)).toBeInTheDocument();
+    expect(dispatch).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole('button', { name: 'Confirm Import' }));
+
     expect(dispatch).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'IMPORT_MERGE',
@@ -52,7 +57,30 @@ describe('SettingsScreen', () => {
         }),
       }),
     );
+  });
+
+  it('does not dispatch when import is cancelled', async () => {
+    const user = userEvent.setup();
+    const dispatch = vi.fn();
+    const backup = {
+      app: 'boardgamescore',
+      formatVersion: 1,
+      exportedAt: '2026-08-21T00:00:00.000Z',
+      players: [{ id: 'p1', name: 'Alice', color: '#ff0000' }],
+      templates: [],
+      game: null,
+      history: [],
+    };
+    const file = new File([JSON.stringify(backup)], 'backup.json', { type: 'application/json' });
+
+    render(<SettingsScreen state={EMPTY_STATE} dispatch={dispatch} />);
+    await user.upload(screen.getByLabelText('Import Backup File'), file);
+
     expect(await screen.findByText(/imported/i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+    expect(dispatch).not.toHaveBeenCalled();
   });
 
   it('shows an error for an invalid backup file and does not dispatch', async () => {

@@ -90,7 +90,9 @@ export function PlayersScreen({
               </Stack>
             }
           >
-            <Box sx={{ width: 16, height: 16, borderRadius: '50%', bgcolor: player.color, mr: 1 }} />
+            <Box
+              sx={{ width: 16, height: 16, borderRadius: '50%', bgcolor: player.color, mr: 1 }}
+            />
             <ListItemText primary={player.name} />
           </ListItem>
         ))}

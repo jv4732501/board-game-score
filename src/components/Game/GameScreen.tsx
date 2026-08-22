@@ -37,10 +37,7 @@ export function GameScreen({
 
   return (
     <Box>
-      <Stack
-        direction="row"
-        sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 2 }}
-      >
+      <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h5">{template.name}</Typography>
         <Stack direction="row" spacing={1}>
           <Button

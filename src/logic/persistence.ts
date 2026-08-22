@@ -41,9 +41,7 @@ export function buildBackup(state: AppState, nowMs: number): Backup {
   };
 }
 
-export type ValidateBackupResult =
-  | { ok: true; backup: AppState }
-  | { ok: false; reason: string };
+export type ValidateBackupResult = { ok: true; backup: AppState } | { ok: false; reason: string };
 
 export function validateBackup(obj: unknown): ValidateBackupResult {
   const notBackup: ValidateBackupResult = {

@@ -1,7 +1,17 @@
 import { useRef, useState, type Dispatch } from 'react';
 import { Alert, Box, Button, Stack, Typography } from '@mui/material';
-import { buildBackup, mergeBackup, validateBackup, type AppState } from '../../logic/persistence';
+import {
+  buildBackup,
+  mergeBackup,
+  validateBackup,
+  type AppState,
+  type MergeSummary,
+} from '../../logic/persistence';
 import type { AppAction } from '../../hooks/useAppState';
+
+function summaryText(summary: MergeSummary): string {
+  return `Imported ${summary.playersAdded} new / ${summary.playersUpdated} updated players, ${summary.templatesAdded} new / ${summary.templatesUpdated} updated templates, ${summary.gamesAdded} new / ${summary.gamesUpdated} updated games.${summary.gameSkipped ? ' In-progress game skipped (one is already active).' : ''}`;
+}
 
 export function SettingsScreen({
   state,
@@ -13,6 +23,10 @@ export function SettingsScreen({
   const [message, setMessage] = useState<{ severity: 'success' | 'error'; text: string } | null>(
     null,
   );
+  const [pendingImport, setPendingImport] = useState<{
+    mergedState: AppState;
+    summary: MergeSummary;
+  } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function handleExport() {
@@ -40,11 +54,19 @@ export function SettingsScreen({
       return;
     }
     const { state: merged, summary } = mergeBackup(state, validated.backup);
-    dispatch({ type: 'IMPORT_MERGE', state: merged });
-    setMessage({
-      severity: 'success',
-      text: `Imported ${summary.playersAdded} new / ${summary.playersUpdated} updated players, ${summary.templatesAdded} new / ${summary.templatesUpdated} updated templates, ${summary.gamesAdded} new / ${summary.gamesUpdated} updated games.${summary.gameSkipped ? ' In-progress game skipped (one is already active).' : ''}`,
-    });
+    setMessage(null);
+    setPendingImport({ mergedState: merged, summary });
+  }
+
+  function handleConfirmImport() {
+    if (!pendingImport) return;
+    dispatch({ type: 'IMPORT_MERGE', state: pendingImport.mergedState });
+    setMessage({ severity: 'success', text: summaryText(pendingImport.summary) });
+    setPendingImport(null);
+  }
+
+  function handleCancelImport() {
+    setPendingImport(null);
   }
 
   return (
@@ -70,6 +92,17 @@ export function SettingsScreen({
           }}
         />
       </Stack>
+      {pendingImport && (
+        <Box sx={{ mb: 2 }}>
+          <Alert severity="info">{summaryText(pendingImport.summary)}</Alert>
+          <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+            <Button variant="contained" onClick={handleConfirmImport}>
+              Confirm Import
+            </Button>
+            <Button onClick={handleCancelImport}>Cancel</Button>
+          </Stack>
+        </Box>
+      )}
       {message && <Alert severity={message.severity}>{message.text}</Alert>}
     </Box>
   );
