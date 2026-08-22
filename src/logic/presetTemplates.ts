@@ -39,8 +39,23 @@ export const GOLF_TEMPLATE: Template = {
   builtIn: true,
 };
 
+export const MONOPOLY_TEMPLATE: Template = {
+  id: 'preset-monopoly',
+  name: 'Monopoly',
+  categories: [
+    { id: 'monopoly-cash', name: 'Cash', key: 'cash' },
+    { id: 'monopoly-property', name: 'Property Value', key: 'propertyValue' },
+    { id: 'monopoly-buildings', name: 'Buildings', key: 'buildings' },
+    { id: 'monopoly-mortgages', name: 'Mortgages (Penalty)', key: 'mortgagesPenalty' },
+  ],
+  formula: 'cash + propertyValue + buildings - mortgagesPenalty',
+  winDirection: 'high',
+  builtIn: true,
+};
+
 export const PRESET_TEMPLATES: Template[] = [
   CATAN_TEMPLATE,
   TICKET_TO_RIDE_TEMPLATE,
   GOLF_TEMPLATE,
+  MONOPOLY_TEMPLATE,
 ];
