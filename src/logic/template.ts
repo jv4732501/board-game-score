@@ -108,6 +108,9 @@ export function validateTemplate(input: ValidateTemplateInput): ValidateTemplate
       return { ok: false, error: `Duplicate category key "${category.key}".` };
     }
     keys.add(category.key);
+    if (category.pointValue !== undefined && !Number.isFinite(category.pointValue)) {
+      return { ok: false, error: `Category "${category.name}" has an invalid point value.` };
+    }
   }
   if (input.formula) {
     const parsed = parseFormula(

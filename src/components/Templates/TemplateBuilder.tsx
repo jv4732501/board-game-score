@@ -19,10 +19,15 @@ interface DraftCategory {
   name: string;
   key: string;
   keyTouched: boolean;
+  pointValue: string;
 }
 
 function toDraftCategories(categories: Category[]): DraftCategory[] {
-  return categories.map((c) => ({ ...c, keyTouched: true }));
+  return categories.map((c) => ({
+    ...c,
+    keyTouched: true,
+    pointValue: c.pointValue !== undefined ? String(c.pointValue) : '',
+  }));
 }
 
 export function TemplateBuilder({
@@ -47,7 +52,7 @@ export function TemplateBuilder({
   function addCategory() {
     setCategories((cs) => [
       ...cs,
-      { id: crypto.randomUUID(), name: '', key: '', keyTouched: false },
+      { id: crypto.randomUUID(), name: '', key: '', keyTouched: false, pointValue: '' },
     ]);
   }
 
@@ -69,6 +74,10 @@ export function TemplateBuilder({
     );
   }
 
+  function updateCategoryPointValue(id: string, newPointValue: string) {
+    setCategories((cs) => cs.map((c) => (c.id === id ? { ...c, pointValue: newPointValue } : c)));
+  }
+
   const knownKeys = categories.map((c) => c.key);
   const trimmedFormula = formula.trim();
   let formulaPreview: string;
@@ -85,11 +94,16 @@ export function TemplateBuilder({
   }
 
   function handleSave() {
-    const finalCategories: Category[] = categories.map((c) => ({
-      id: c.id,
-      name: c.name.trim(),
-      key: c.key,
-    }));
+    const finalCategories: Category[] = categories.map((c) => {
+      const trimmedPointValue = c.pointValue.trim();
+      const pointValue = trimmedPointValue === '' ? undefined : Number(trimmedPointValue);
+      return {
+        id: c.id,
+        name: c.name.trim(),
+        key: c.key,
+        ...(pointValue !== undefined ? { pointValue } : {}),
+      };
+    });
     const result = validateTemplate({
       name,
       categories: finalCategories,
@@ -129,6 +143,13 @@ export function TemplateBuilder({
               label="Key"
               value={category.key}
               onChange={(e) => updateCategoryKey(category.id, e.target.value)}
+              sx={{ width: 140 }}
+            />
+            <TextField
+              type="number"
+              label="Point Value (optional)"
+              value={category.pointValue}
+              onChange={(e) => updateCategoryPointValue(category.id, e.target.value)}
               sx={{ width: 140 }}
             />
             <IconButton

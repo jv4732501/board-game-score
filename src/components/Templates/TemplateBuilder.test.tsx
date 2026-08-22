@@ -98,4 +98,25 @@ describe('TemplateBuilder', () => {
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(onCancel).toHaveBeenCalled();
   });
+
+  it('saves a category with a point value as a number, and omits it when left blank', async () => {
+    const user = userEvent.setup();
+    const onSave = vi.fn();
+    render(<TemplateBuilder initialTemplate={null} onSave={onSave} onCancel={() => {}} />);
+    await user.type(screen.getByLabelText('Template Name'), 'Yahtzee-ish');
+    await user.click(screen.getByRole('button', { name: 'Add Category' }));
+    await user.type(screen.getByLabelText('Category Name'), 'Full House');
+    await user.type(screen.getByLabelText('Point Value (optional)'), '25');
+    await user.click(screen.getByRole('button', { name: 'Add Category' }));
+    await user.type(screen.getAllByLabelText('Category Name')[1], 'Chance');
+    await user.click(screen.getByRole('button', { name: 'Save Template' }));
+    expect(onSave).toHaveBeenCalledWith(
+      expect.objectContaining({
+        categories: [
+          expect.objectContaining({ name: 'Full House', pointValue: 25 }),
+          expect.not.objectContaining({ pointValue: expect.anything() }),
+        ],
+      }),
+    );
+  });
 });

@@ -2,6 +2,7 @@ export interface Category {
   id: string;
   name: string;
   key: string;
+  pointValue?: number;
 }
 
 export interface Template {

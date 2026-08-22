@@ -95,7 +95,7 @@ function CategoryRow({
           </Stack>
         ))}
       </Stack>
-      <Stack direction="row" spacing={1} sx={{ mt: 0.5 }}>
+      <Stack direction="row" spacing={1} sx={{ mt: 0.5, alignItems: 'center' }}>
         <TextField
           type="number"
           label={`Add to ${category.name}`}
@@ -104,6 +104,15 @@ function CategoryRow({
           sx={{ width: 140 }}
         />
         <Button onClick={handleAdd}>Add</Button>
+        {category.pointValue !== undefined && (
+          <Button
+            variant="outlined"
+            aria-label={`Quick add ${category.pointValue} to ${category.name}`}
+            onClick={() => onAddEntry(category.pointValue!)}
+          >
+            +{category.pointValue}
+          </Button>
+        )}
       </Stack>
     </Box>
   );

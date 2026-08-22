@@ -190,6 +190,22 @@ describe('validateTemplate', () => {
     const result = validateTemplate({ name: 'Foo', categories: CATEGORIES, formula: 'a + b' });
     expect(result.ok).toBe(true);
   });
+
+  it('accepts a category with a finite point value', () => {
+    const withPointValue: Category[] = [
+      { id: 'c1', name: 'Full House', key: 'fullHouse', pointValue: 25 },
+    ];
+    const result = validateTemplate({ name: 'Foo', categories: withPointValue, formula: null });
+    expect(result.ok).toBe(true);
+  });
+
+  it('rejects a category with a non-finite point value', () => {
+    const withBadPointValue: Category[] = [
+      { id: 'c1', name: 'Full House', key: 'fullHouse', pointValue: NaN },
+    ];
+    const result = validateTemplate({ name: 'Foo', categories: withBadPointValue, formula: null });
+    expect(result.ok).toBe(false);
+  });
 });
 
 describe('getAllTemplates', () => {

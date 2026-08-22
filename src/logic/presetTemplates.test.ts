@@ -44,6 +44,32 @@ describe('YAHTZEE_TEMPLATE', () => {
       'yahtzeeBonus',
     ]);
   });
+
+  it('gives fixed-value categories a quick-add point value, and leaves variable ones freeform', () => {
+    const pointValueByKey = Object.fromEntries(
+      YAHTZEE_TEMPLATE.categories.map((c) => [c.key, c.pointValue]),
+    );
+    expect(pointValueByKey.upperBonus).toBe(35);
+    expect(pointValueByKey.fullHouse).toBe(25);
+    expect(pointValueByKey.smallStraight).toBe(30);
+    expect(pointValueByKey.largeStraight).toBe(40);
+    expect(pointValueByKey.yahtzee).toBe(50);
+    expect(pointValueByKey.yahtzeeBonus).toBe(100);
+    // Dice-total categories vary every roll — no fixed value to quick-add.
+    for (const key of [
+      'aces',
+      'twos',
+      'threes',
+      'fours',
+      'fives',
+      'sixes',
+      'threeOfAKind',
+      'fourOfAKind',
+      'chance',
+    ]) {
+      expect(pointValueByKey[key]).toBeUndefined();
+    }
+  });
 });
 
 describe('FARKLE_TEMPLATE', () => {

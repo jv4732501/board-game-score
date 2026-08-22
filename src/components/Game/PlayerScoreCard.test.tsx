@@ -53,4 +53,20 @@ describe('PlayerScoreCard', () => {
     await user.click(screen.getByLabelText('Remove Points entry 4'));
     expect(onRemoveEntry).toHaveBeenCalledWith('c1', 'e1');
   });
+
+  it('shows a quick-add button for a category with a fixed point value and adds that value on click', async () => {
+    const user = userEvent.setup();
+    const onAddEntry = vi.fn();
+    const categoriesWithPointValue: Category[] = [
+      { id: 'c1', name: 'Full House', key: 'fullHouse', pointValue: 25 },
+    ];
+    renderCard({ categories: categoriesWithPointValue, onAddEntry });
+    await user.click(screen.getByRole('button', { name: 'Quick add 25 to Full House' }));
+    expect(onAddEntry).toHaveBeenCalledWith('c1', 25);
+  });
+
+  it('does not show a quick-add button for a category without a fixed point value', () => {
+    renderCard();
+    expect(screen.queryByRole('button', { name: /Quick add/ })).not.toBeInTheDocument();
+  });
 });
