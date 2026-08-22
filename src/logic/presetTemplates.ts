@@ -53,9 +53,45 @@ export const MONOPOLY_TEMPLATE: Template = {
   builtIn: true,
 };
 
+export const YAHTZEE_TEMPLATE: Template = {
+  id: 'preset-yahtzee',
+  name: 'Yahtzee',
+  categories: [
+    { id: 'yahtzee-aces', name: 'Aces', key: 'aces' },
+    { id: 'yahtzee-twos', name: 'Twos', key: 'twos' },
+    { id: 'yahtzee-threes', name: 'Threes', key: 'threes' },
+    { id: 'yahtzee-fours', name: 'Fours', key: 'fours' },
+    { id: 'yahtzee-fives', name: 'Fives', key: 'fives' },
+    { id: 'yahtzee-sixes', name: 'Sixes', key: 'sixes' },
+    { id: 'yahtzee-upper-bonus', name: 'Upper Bonus', key: 'upperBonus' },
+    { id: 'yahtzee-three-of-a-kind', name: 'Three of a Kind', key: 'threeOfAKind' },
+    { id: 'yahtzee-four-of-a-kind', name: 'Four of a Kind', key: 'fourOfAKind' },
+    { id: 'yahtzee-full-house', name: 'Full House', key: 'fullHouse' },
+    { id: 'yahtzee-small-straight', name: 'Small Straight', key: 'smallStraight' },
+    { id: 'yahtzee-large-straight', name: 'Large Straight', key: 'largeStraight' },
+    { id: 'yahtzee-yahtzee', name: 'Yahtzee', key: 'yahtzee' },
+    { id: 'yahtzee-chance', name: 'Chance', key: 'chance' },
+    { id: 'yahtzee-yahtzee-bonus', name: 'Yahtzee Bonus', key: 'yahtzeeBonus' },
+  ],
+  formula: null,
+  winDirection: 'high',
+  builtIn: true,
+};
+
+export const FARKLE_TEMPLATE: Template = {
+  id: 'preset-farkle',
+  name: 'Farkle',
+  categories: [{ id: 'farkle-turn-points', name: 'Turn Points', key: 'turnPoints' }],
+  formula: null,
+  winDirection: 'high',
+  builtIn: true,
+};
+
 export const PRESET_TEMPLATES: Template[] = [
   CATAN_TEMPLATE,
   TICKET_TO_RIDE_TEMPLATE,
   GOLF_TEMPLATE,
   MONOPOLY_TEMPLATE,
+  YAHTZEE_TEMPLATE,
+  FARKLE_TEMPLATE,
 ];
