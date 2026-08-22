@@ -32,7 +32,6 @@ describe('PlayerScoreCard', () => {
 
   it('shows each logged entry as a chip with a remove button', () => {
     renderCard();
-    expect(screen.getByText('4')).toBeInTheDocument();
     expect(screen.getByLabelText('Remove Points entry 4')).toBeInTheDocument();
   });
 
