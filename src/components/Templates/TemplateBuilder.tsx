@@ -12,7 +12,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import { evaluateFormula, parseFormula } from '../../logic/formula';
 import { slugifyKey, validateTemplate } from '../../logic/template';
-import type { Category, Template } from '../../logic/types';
+import type { Category, ScoringReferenceRow, Template } from '../../logic/types';
 
 interface DraftCategory {
   id: string;
@@ -28,6 +28,16 @@ function toDraftCategories(categories: Category[]): DraftCategory[] {
     keyTouched: true,
     pointValue: c.pointValue !== undefined ? String(c.pointValue) : '',
   }));
+}
+
+interface DraftScoringRow {
+  id: string;
+  label: string;
+  points: string;
+}
+
+function toDraftScoringRows(rows: ScoringReferenceRow[] | undefined): DraftScoringRow[] {
+  return (rows ?? []).map((r) => ({ id: crypto.randomUUID(), ...r }));
 }
 
 export function TemplateBuilder({
@@ -46,6 +56,9 @@ export function TemplateBuilder({
   const [formula, setFormula] = useState(initialTemplate?.formula ?? '');
   const [winDirection, setWinDirection] = useState<'high' | 'low'>(
     initialTemplate?.winDirection ?? 'high',
+  );
+  const [scoringRows, setScoringRows] = useState<DraftScoringRow[]>(
+    toDraftScoringRows(initialTemplate?.scoringReference),
   );
   const [error, setError] = useState<string | null>(null);
 
@@ -76,6 +89,22 @@ export function TemplateBuilder({
 
   function updateCategoryPointValue(id: string, newPointValue: string) {
     setCategories((cs) => cs.map((c) => (c.id === id ? { ...c, pointValue: newPointValue } : c)));
+  }
+
+  function addScoringRow() {
+    setScoringRows((rs) => [...rs, { id: crypto.randomUUID(), label: '', points: '' }]);
+  }
+
+  function removeScoringRow(id: string) {
+    setScoringRows((rs) => rs.filter((r) => r.id !== id));
+  }
+
+  function updateScoringRowLabel(id: string, newLabel: string) {
+    setScoringRows((rs) => rs.map((r) => (r.id === id ? { ...r, label: newLabel } : r)));
+  }
+
+  function updateScoringRowPoints(id: string, newPoints: string) {
+    setScoringRows((rs) => rs.map((r) => (r.id === id ? { ...r, points: newPoints } : r)));
   }
 
   const knownKeys = categories.map((c) => c.key);
@@ -113,6 +142,9 @@ export function TemplateBuilder({
       setError(result.error);
       return;
     }
+    const finalScoringReference: ScoringReferenceRow[] = scoringRows
+      .filter((r) => r.label.trim() !== '' && r.points.trim() !== '')
+      .map((r) => ({ label: r.label.trim(), points: r.points.trim() }));
     onSave({
       id: initialTemplate?.id ?? crypto.randomUUID(),
       name: name.trim(),
@@ -120,9 +152,7 @@ export function TemplateBuilder({
       formula: trimmedFormula || null,
       winDirection,
       builtIn: false,
-      ...(initialTemplate?.scoringReference
-        ? { scoringReference: initialTemplate.scoringReference }
-        : {}),
+      ...(finalScoringReference.length > 0 ? { scoringReference: finalScoringReference } : {}),
     });
   }
 
@@ -171,6 +201,30 @@ export function TemplateBuilder({
           onChange={(e) => setFormula(e.target.value)}
           helperText={formulaPreview}
         />
+
+        <Typography variant="subtitle1">Scoring Reference (optional)</Typography>
+        {scoringRows.map((row) => (
+          <Stack key={row.id} direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+            <TextField
+              label="Label"
+              value={row.label}
+              onChange={(e) => updateScoringRowLabel(row.id, e.target.value)}
+            />
+            <TextField
+              label="Points"
+              value={row.points}
+              onChange={(e) => updateScoringRowPoints(row.id, e.target.value)}
+              sx={{ width: 200 }}
+            />
+            <IconButton
+              aria-label={`Remove scoring reference row ${row.label || row.id}`}
+              onClick={() => removeScoringRow(row.id)}
+            >
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          </Stack>
+        ))}
+        <Button onClick={addScoringRow}>Add Scoring Reference Row</Button>
 
         <Typography variant="subtitle1">Win Direction</Typography>
         <ToggleButtonGroup

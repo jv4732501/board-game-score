@@ -74,7 +74,7 @@ describe('TemplateBuilder', () => {
     );
   });
 
-  it('preserves an existing scoring reference through save, with no UI to edit it', async () => {
+  it('pre-fills an existing scoring reference and preserves it through save unedited', async () => {
     const user = userEvent.setup();
     const existing: Template = {
       id: 'tmpl-1',
@@ -87,11 +87,54 @@ describe('TemplateBuilder', () => {
     };
     const onSave = vi.fn();
     render(<TemplateBuilder initialTemplate={existing} onSave={onSave} onCancel={() => {}} />);
+    expect(screen.getByDisplayValue('Straight (1-6)')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('1500')).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Save Template' }));
     expect(onSave).toHaveBeenCalledWith(
       expect.objectContaining({
         scoringReference: [{ label: 'Straight (1-6)', points: '1500' }],
       }),
+    );
+  });
+
+  it('adds a scoring reference row and saves it', async () => {
+    const user = userEvent.setup();
+    const onSave = vi.fn();
+    render(<TemplateBuilder initialTemplate={null} onSave={onSave} onCancel={() => {}} />);
+    await user.type(screen.getByLabelText('Template Name'), 'My Game');
+    await user.click(screen.getByRole('button', { name: 'Add Category' }));
+    await user.type(screen.getByLabelText('Category Name'), 'Points');
+    await user.click(screen.getByRole('button', { name: 'Add Scoring Reference Row' }));
+    await user.type(screen.getByLabelText('Label'), 'Full House');
+    await user.type(screen.getByLabelText('Points'), '25');
+    await user.click(screen.getByRole('button', { name: 'Save Template' }));
+    expect(onSave).toHaveBeenCalledWith(
+      expect.objectContaining({
+        scoringReference: [{ label: 'Full House', points: '25' }],
+      }),
+    );
+  });
+
+  it('removes a scoring reference row when its delete button is clicked', async () => {
+    const user = userEvent.setup();
+    render(<TemplateBuilder initialTemplate={null} onSave={() => {}} onCancel={() => {}} />);
+    await user.click(screen.getByRole('button', { name: 'Add Scoring Reference Row' }));
+    await user.type(screen.getByLabelText('Label'), 'Full House');
+    await user.click(screen.getByLabelText('Remove scoring reference row Full House'));
+    expect(screen.queryByLabelText('Label')).not.toBeInTheDocument();
+  });
+
+  it('omits a blank scoring reference row from the saved template', async () => {
+    const user = userEvent.setup();
+    const onSave = vi.fn();
+    render(<TemplateBuilder initialTemplate={null} onSave={onSave} onCancel={() => {}} />);
+    await user.type(screen.getByLabelText('Template Name'), 'My Game');
+    await user.click(screen.getByRole('button', { name: 'Add Category' }));
+    await user.type(screen.getByLabelText('Category Name'), 'Points');
+    await user.click(screen.getByRole('button', { name: 'Add Scoring Reference Row' }));
+    await user.click(screen.getByRole('button', { name: 'Save Template' }));
+    expect(onSave).toHaveBeenCalledWith(
+      expect.not.objectContaining({ scoringReference: expect.anything() }),
     );
   });
 
