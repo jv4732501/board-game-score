@@ -74,6 +74,27 @@ describe('TemplateBuilder', () => {
     );
   });
 
+  it('preserves an existing scoring reference through save, with no UI to edit it', async () => {
+    const user = userEvent.setup();
+    const existing: Template = {
+      id: 'tmpl-1',
+      name: 'Farkle',
+      categories: [{ id: 'c1', name: 'Turn Points', key: 'turnPoints' }],
+      formula: null,
+      winDirection: 'high',
+      builtIn: false,
+      scoringReference: [{ label: 'Straight (1-6)', points: '1500' }],
+    };
+    const onSave = vi.fn();
+    render(<TemplateBuilder initialTemplate={existing} onSave={onSave} onCancel={() => {}} />);
+    await user.click(screen.getByRole('button', { name: 'Save Template' }));
+    expect(onSave).toHaveBeenCalledWith(
+      expect.objectContaining({
+        scoringReference: [{ label: 'Straight (1-6)', points: '1500' }],
+      }),
+    );
+  });
+
   it('pre-fills the form when editing an existing template and preserves its id', async () => {
     const user = userEvent.setup();
     const existing: Template = {

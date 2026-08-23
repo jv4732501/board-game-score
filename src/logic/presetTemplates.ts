@@ -76,6 +76,15 @@ export const YAHTZEE_TEMPLATE: Template = {
   formula: null,
   winDirection: 'high',
   builtIn: true,
+  scoringReference: [
+    { label: 'Upper Section Bonus', points: '35 (if upper section total ≥ 63)' },
+    { label: 'Three of a Kind / Four of a Kind / Chance', points: 'sum of all 5 dice' },
+    { label: 'Full House', points: '25' },
+    { label: 'Small Straight', points: '30' },
+    { label: 'Large Straight', points: '40' },
+    { label: 'Yahtzee', points: '50' },
+    { label: 'Yahtzee Bonus', points: '100 (each extra Yahtzee, after the first is scored)' },
+  ],
 };
 
 export const FARKLE_TEMPLATE: Template = {
@@ -85,6 +94,23 @@ export const FARKLE_TEMPLATE: Template = {
   formula: null,
   winDirection: 'high',
   builtIn: true,
+  scoringReference: [
+    { label: 'Single 1', points: '100' },
+    { label: 'Single 5', points: '50' },
+    { label: 'Three 1s', points: '1000' },
+    { label: 'Three 2s', points: '200' },
+    { label: 'Three 3s', points: '300' },
+    { label: 'Three 4s', points: '400' },
+    { label: 'Three 5s', points: '500' },
+    { label: 'Three 6s', points: '600' },
+    { label: 'Four of a Kind', points: '1000' },
+    { label: 'Five of a Kind', points: '2000' },
+    { label: 'Six of a Kind', points: '3000' },
+    { label: 'Straight (1-6)', points: '1500' },
+    { label: 'Three Pairs', points: '1500' },
+    { label: 'Two Triplets', points: '2500' },
+    { label: 'Farkle (no scoring dice)', points: '0 — turn ends, lose unbanked points' },
+  ],
 };
 
 export const PRESET_TEMPLATES: Template[] = [

@@ -70,6 +70,20 @@ describe('YAHTZEE_TEMPLATE', () => {
       expect(pointValueByKey[key]).toBeUndefined();
     }
   });
+
+  it('has a scoring reference covering every fixed-value category', () => {
+    const labels = YAHTZEE_TEMPLATE.scoringReference?.map((r) => r.label) ?? [];
+    expect(labels).toEqual(
+      expect.arrayContaining([
+        'Full House',
+        'Small Straight',
+        'Large Straight',
+        'Yahtzee',
+        'Yahtzee Bonus',
+        'Upper Section Bonus',
+      ]),
+    );
+  });
 });
 
 describe('FARKLE_TEMPLATE', () => {
@@ -78,6 +92,20 @@ describe('FARKLE_TEMPLATE', () => {
     expect(FARKLE_TEMPLATE.winDirection).toBe('high');
     expect(FARKLE_TEMPLATE.formula).toBeNull();
     expect(FARKLE_TEMPLATE.categories.map((c) => c.key)).toEqual(['turnPoints']);
+  });
+
+  it('has a scoring reference covering the standard combos', () => {
+    const labels = FARKLE_TEMPLATE.scoringReference?.map((r) => r.label) ?? [];
+    expect(labels).toEqual(
+      expect.arrayContaining([
+        'Single 1',
+        'Single 5',
+        'Three 1s',
+        'Straight (1-6)',
+        'Three Pairs',
+        'Two Triplets',
+      ]),
+    );
   });
 });
 

@@ -120,6 +120,9 @@ export function TemplateBuilder({
       formula: trimmedFormula || null,
       winDirection,
       builtIn: false,
+      ...(initialTemplate?.scoringReference
+        ? { scoringReference: initialTemplate.scoringReference }
+        : {}),
     });
   }
 

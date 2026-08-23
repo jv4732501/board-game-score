@@ -91,4 +91,27 @@ describe('GameScreen', () => {
     );
     expect(onFinish).toHaveBeenCalled();
   });
+
+  it('does not show a Scoring Reference button when the template has none', () => {
+    renderScreen();
+    expect(screen.queryByRole('button', { name: 'Scoring Reference' })).not.toBeInTheDocument();
+  });
+
+  it('shows a Scoring Reference button and opens a dialog listing it on click', async () => {
+    const user = userEvent.setup();
+    const templateWithReference: Template = {
+      ...TEMPLATE,
+      scoringReference: [
+        { label: 'Full House', points: '25' },
+        { label: 'Yahtzee', points: '50' },
+      ],
+    };
+    renderScreen({ template: templateWithReference });
+    await user.click(screen.getByRole('button', { name: 'Scoring Reference' }));
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByText('Full House')).toBeInTheDocument();
+    expect(screen.getByText('25')).toBeInTheDocument();
+    expect(screen.getByText('Yahtzee')).toBeInTheDocument();
+    expect(screen.getByText('50')).toBeInTheDocument();
+  });
 });

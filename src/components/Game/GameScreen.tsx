@@ -1,5 +1,21 @@
-import type { Dispatch } from 'react';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { useState, type Dispatch } from 'react';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { computeStandings } from '../../logic/template';
 import { PlayerScoreCard } from './PlayerScoreCard';
 import type { AppAction } from '../../hooks/useAppState';
@@ -19,6 +35,8 @@ export function GameScreen({
   onFinish: (entry: HistoryEntry) => void;
 }) {
   const standings = computeStandings(template, game, players);
+  const [scoringReferenceOpen, setScoringReferenceOpen] = useState(false);
+  const hasScoringReference = (template.scoringReference?.length ?? 0) > 0;
 
   function handleFinish() {
     const nowIso = new Date().toISOString();
@@ -38,7 +56,17 @@ export function GameScreen({
   return (
     <Box>
       <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h5">{template.name}</Typography>
+        <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
+          <Typography variant="h5">{template.name}</Typography>
+          {hasScoringReference && (
+            <IconButton
+              aria-label="Scoring Reference"
+              onClick={() => setScoringReferenceOpen(true)}
+            >
+              <InfoOutlinedIcon fontSize="small" />
+            </IconButton>
+          )}
+        </Stack>
         <Stack direction="row" spacing={1}>
           <Button
             onClick={() => dispatch({ type: 'UNDO_LAST_ENTRY' })}
@@ -78,6 +106,32 @@ export function GameScreen({
           />
         );
       })}
+      {hasScoringReference && (
+        <Dialog open={scoringReferenceOpen} onClose={() => setScoringReferenceOpen(false)}>
+          <DialogTitle>Scoring Reference</DialogTitle>
+          <DialogContent>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Category</TableCell>
+                  <TableCell align="right">Points</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {template.scoringReference!.map((row) => (
+                  <TableRow key={row.label}>
+                    <TableCell>{row.label}</TableCell>
+                    <TableCell align="right">{row.points}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setScoringReferenceOpen(false)}>Close</Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </Box>
   );
 }

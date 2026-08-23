@@ -5,6 +5,11 @@ export interface Category {
   pointValue?: number;
 }
 
+export interface ScoringReferenceRow {
+  label: string;
+  points: string;
+}
+
 export interface Template {
   id: string;
   name: string;
@@ -12,6 +17,7 @@ export interface Template {
   formula: string | null;
   winDirection: 'high' | 'low';
   builtIn: boolean;
+  scoringReference?: ScoringReferenceRow[];
 }
 
 export interface Player {
